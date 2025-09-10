@@ -7,8 +7,8 @@ function App() {
   const [email, setEmail] = useState("");
   const [position, setPosition] = useState("");
 
-  // ✅ Base API URL
-  const API_URL = "https://learnvest-erp.onrender.com/api";
+  // ✅ Base API URL (points to /api)
+  const API_URL = process.env.REACT_APP_API_URL;
 
   // Fetch employees
   const fetchEmployees = () => {
