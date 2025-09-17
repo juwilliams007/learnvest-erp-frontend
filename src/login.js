@@ -5,12 +5,8 @@ function Login({ setUser }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // ✅ Use Render API in production, localhost only in dev
-  const API_URL =
-    process.env.REACT_APP_API_URL ||
-    (process.env.NODE_ENV === "production"
-      ? "https://learnvest-erp.onrender.com/api"
-      : "http://localhost:5000/api");
+  // 🔒 Hardcoded API URL to ensure Render backend is always used
+  const API_URL = "https://learnvest-erp.onrender.com/api";
 
   const handleLogin = async (e) => {
     e.preventDefault(); // prevent page reload
@@ -19,7 +15,7 @@ function Login({ setUser }) {
 
       // save token + user info
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("id", res.data._id); // ✅ keep id for worklogs
+      localStorage.setItem("id", res.data._id);   // ✅ was originally "id"
 
       setUser({
         _id: res.data._id,
