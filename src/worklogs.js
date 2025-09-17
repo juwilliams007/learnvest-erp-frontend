@@ -6,11 +6,12 @@ function Worklogs() {
   const [nextDayPlan, setNextDayPlan] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Use Render API as fallback instead of localhost
   const API_URL =
-    process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+    process.env.REACT_APP_API_URL || "https://learnvest-erp.onrender.com/api";
 
   const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("id");   // ✅ original key was "id"
+  const userId = localStorage.getItem("id");
 
   // Fetch my logs
   const fetchLogs = async () => {
