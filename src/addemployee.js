@@ -3,13 +3,12 @@ import { useState } from "react";
 function AddEmployee({ onAdded }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");   // NEW
   const [role, setRole] = useState("employee");   // default role
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const API_URL =
-    process.env.REACT_APP_API_URL || "https://learnvest-erp.onrender.com/api";
+    process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,15 +18,13 @@ function AddEmployee({ onAdded }) {
     setError(null);
 
     try {
-      const payload = { name, email, password, role };
-
-      console.log("📤 Sending user payload:", payload);
+      const payload = { name, email, role };
 
       const res = await fetch(`${API_URL}/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });
@@ -39,7 +36,6 @@ function AddEmployee({ onAdded }) {
 
       setName("");
       setEmail("");
-      setPassword("");    // clear password
       setRole("employee");
 
       if (onAdded) onAdded();
@@ -64,13 +60,6 @@ function AddEmployee({ onAdded }) {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Email"
-        required
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
         required
       />
       <select

@@ -6,7 +6,8 @@ function Login({ setUser }) {
   const [password, setPassword] = useState("");
 
   // fallback if .env not set
-  const API_URL = process.env.REACT_APP_API_URL || "https://learnvest-erp.onrender.com/api";
+  const API_URL =
+    process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
   const handleLogin = async (e) => {
     e.preventDefault(); // prevent page reload
@@ -15,6 +16,8 @@ function Login({ setUser }) {
 
       // save token + user info
       localStorage.setItem("token", res.data.token);
+      localStorage.setItem("id", res.data._id);   // ✅ was originally "id"
+
       setUser({
         _id: res.data._id,
         name: res.data.name,

@@ -6,7 +6,7 @@ function Employees() {
   const [error, setError] = useState(null);
 
   const API_URL =
-    process.env.REACT_APP_API_URL || "https://learnvest-erp.onrender.com/api";
+    process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
   useEffect(() => {
     const fetchUsers = async () => {

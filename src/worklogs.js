@@ -6,9 +6,11 @@ function Worklogs() {
   const [nextDayPlan, setNextDayPlan] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+  const API_URL =
+    process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+
   const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("id");
+  const userId = localStorage.getItem("id");   // ✅ original key was "id"
 
   // Fetch my logs
   const fetchLogs = async () => {
@@ -63,34 +65,6 @@ function Worklogs() {
     }
   };
 
-  // Export logs to CSV
-  const handleExport = () => {
-    if (logs.length === 0) {
-      alert("No logs to export");
-      return;
-    }
-
-    const header = ["Date", "Tasks", "Next Day Plan"];
-    const rows = logs.map((log) => [
-      new Date(log.date).toLocaleDateString(),
-      log.tasks.join("; "),
-      log.nextDayPlan || "",
-    ]);
-
-    const csvContent =
-      [header, ...rows].map((row) => row.join(",")).join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "worklogs.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   return (
     <div style={{ marginTop: "20px" }}>
       <h2>My Worklogs</h2>
@@ -118,39 +92,34 @@ function Worklogs() {
 
       <h3>Previous Logs</h3>
       {logs.length > 0 ? (
-        <>
-          <button onClick={handleExport} style={{ marginBottom: "10px" }}>
-            📤 Export to CSV
-          </button>
-          <table
-            border="1"
-            cellPadding="8"
-            style={{ width: "100%", borderCollapse: "collapse" }}
-          >
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Tasks</th>
-                <th>Next Day Plan</th>
+        <table
+          border="1"
+          cellPadding="8"
+          style={{ width: "100%", borderCollapse: "collapse" }}
+        >
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Tasks</th>
+              <th>Next Day Plan</th>
+            </tr>
+          </thead>
+          <tbody>
+            {logs.map((log) => (
+              <tr key={log._id}>
+                <td>{new Date(log.date).toLocaleDateString()}</td>
+                <td>
+                  <ul style={{ margin: 0, paddingLeft: "20px" }}>
+                    {log.tasks.map((task, i) => (
+                      <li key={i}>{task}</li>
+                    ))}
+                  </ul>
+                </td>
+                <td>{log.nextDayPlan}</td>
               </tr>
-            </thead>
-            <tbody>
-              {logs.map((log) => (
-                <tr key={log._id}>
-                  <td>{new Date(log.date).toLocaleDateString()}</td>
-                  <td>
-                    <ul style={{ margin: 0, paddingLeft: "20px" }}>
-                      {log.tasks.map((task, i) => (
-                        <li key={i}>{task}</li>
-                      ))}
-                    </ul>
-                  </td>
-                  <td>{log.nextDayPlan}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
+            ))}
+          </tbody>
+        </table>
       ) : (
         <p>No worklogs yet.</p>
       )}
