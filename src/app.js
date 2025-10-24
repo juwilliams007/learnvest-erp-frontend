@@ -3,6 +3,7 @@ import Login from "./login";
 import AddEmployee from "./addemployee";
 import Employees from "./employees";
 import Worklogs from "./worklogs";
+import ChangePassword from "./changepassword";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -173,6 +174,8 @@ function App() {
 
           <h2>Worklogs</h2>
           <Worklogs />
+
+          <ChangePassword />
         </>
       )}
     </div>
