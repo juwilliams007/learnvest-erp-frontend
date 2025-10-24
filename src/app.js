@@ -7,6 +7,7 @@ import Worklogs from "./worklogs";
 function App() {
   const [user, setUser] = useState(null);
   const [attendance, setAttendance] = useState([]); // ✅ state for attendance logs
+  const [loading, setLoading] = useState(false);
 
   const API_URL =
     process.env.REACT_APP_API_URL || "https://learnvest-erp.onrender.com/api";
@@ -42,30 +43,70 @@ function App() {
 
   // === Employee Actions ===
   const handleClockIn = async () => {
-    const token = localStorage.getItem("token");
-    await fetch(`${API_URL}/attendance/clockin`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    alert("✅ Clock-in recorded");
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/attendance/clockin`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Failed to clock in");
+      }
+
+      alert("✅ Clock-in recorded");
+    } catch (err) {
+      alert("❌ Error: " + err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleClockOut = async () => {
-    const token = localStorage.getItem("token");
-    await fetch(`${API_URL}/attendance/clockout`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    alert("✅ Clock-out recorded");
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/attendance/clockout`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Failed to clock out");
+      }
+
+      alert("✅ Clock-out recorded");
+    } catch (err) {
+      alert("❌ Error: " + err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleViewAttendance = async () => {
-    const token = localStorage.getItem("token");
-    const res = await fetch(`${API_URL}/attendance/me`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    setAttendance(data);
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/attendance/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Failed to fetch attendance");
+      }
+
+      const data = await res.json();
+      setAttendance(data);
+    } catch (err) {
+      alert("❌ Error: " + err.message);
+      setAttendance([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!user) return <Login setUser={handleLogin} />;
@@ -93,9 +134,15 @@ function App() {
           <p>Role: {user.role}</p>
 
           <div style={{ marginBottom: "15px" }}>
-            <button onClick={handleClockIn}>Clock In</button>
-            <button onClick={handleClockOut}>Clock Out</button>
-            <button onClick={handleViewAttendance}>View My Attendance</button>
+            <button onClick={handleClockIn} disabled={loading}>
+              {loading ? "Processing..." : "Clock In"}
+            </button>
+            <button onClick={handleClockOut} disabled={loading}>
+              {loading ? "Processing..." : "Clock Out"}
+            </button>
+            <button onClick={handleViewAttendance} disabled={loading}>
+              {loading ? "Loading..." : "View My Attendance"}
+            </button>
           </div>
 
           {attendance.length > 0 && (

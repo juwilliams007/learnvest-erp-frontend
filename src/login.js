@@ -5,17 +5,21 @@ function Login({ setUser }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // 🔒 Hardcoded API URL to ensure Render backend is always used
-  const API_URL = "https://learnvest-erp.onrender.com/api";
+  // Use environment variable with fallback to Render backend
+  const API_URL =
+    process.env.REACT_APP_API_URL || "https://learnvest-erp.onrender.com/api";
 
   const handleLogin = async (e) => {
     e.preventDefault(); // prevent page reload
     try {
       const res = await axios.post(`${API_URL}/auth/login`, { email, password });
 
-      // save token + user info
+      // save token + user info to localStorage
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("id", res.data._id);   // ✅ was originally "id"
+      localStorage.setItem("id", res.data._id);
+      localStorage.setItem("role", res.data.role);
+      localStorage.setItem("name", res.data.name);
+      localStorage.setItem("email", res.data.email);
 
       setUser({
         _id: res.data._id,
