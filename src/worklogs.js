@@ -5,6 +5,7 @@ function Worklogs() {
   const [tasks, setTasks] = useState("");
   const [nextDayPlan, setNextDayPlan] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // Use Render API as fallback instead of localhost
   const API_URL =
@@ -16,14 +17,23 @@ function Worklogs() {
   // Fetch my logs
   const fetchLogs = async () => {
     if (!userId) return;
+    setError(null);
     try {
       const res = await fetch(`${API_URL}/worklogs/employee/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to fetch worklogs");
+      }
+
       const data = await res.json();
       setLogs(data);
     } catch (err) {
       console.error("❌ Error fetching worklogs:", err);
+      setError(err.message);
+      setLogs([]);
     }
   };
 
@@ -54,13 +64,18 @@ function Worklogs() {
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error("Failed to submit worklog");
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to submit worklog");
+      }
 
+      alert("✅ Worklog submitted successfully!");
       setTasks("");
       setNextDayPlan("");
+      setError(null);
       fetchLogs();
     } catch (err) {
-      alert(err.message);
+      alert("❌ Error: " + err.message);
     } finally {
       setLoading(false);
     }
@@ -90,6 +105,12 @@ function Worklogs() {
           {loading ? "Submitting..." : "Submit Worklog"}
         </button>
       </form>
+
+      {error && (
+        <p style={{ color: "red", marginBottom: "10px" }}>
+          ❌ Error: {error}
+        </p>
+      )}
 
       <h3>Previous Logs</h3>
       {logs.length > 0 ? (
