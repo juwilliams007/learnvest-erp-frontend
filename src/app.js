@@ -10,16 +10,18 @@ import EmployeeTasks from "./employeetasks";
 
 function App() {
   const [user, setUser] = useState(null);
-  const [attendance, setAttendance] = useState([]);
+  const [attendance, setAttendance] = useState([]); // ✅ state for attendance logs
   const [loading, setLoading] = useState(false);
 
   const API_URL =
     process.env.REACT_APP_API_URL || "https://learnvest-erp.onrender.com/api";
 
+  // Check if user is on setup-password page
   const isSetupPasswordPage = window.location.pathname === "/setup-password";
 
+  // Restore session if token exists (must be before any returns)
   useEffect(() => {
-    if (isSetupPasswordPage) return;
+    if (isSetupPasswordPage) return; // Skip session restore on setup page
 
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
@@ -32,6 +34,7 @@ function App() {
     }
   }, [isSetupPasswordPage]);
 
+  // Save user info to localStorage when logging in
   const handleLogin = (userData) => {
     localStorage.setItem("token", userData.token);
     localStorage.setItem("role", userData.role);
@@ -47,6 +50,7 @@ function App() {
     setAttendance([]);
   };
 
+  // === Employee Actions ===
   const handleClockIn = async () => {
     setLoading(true);
     try {
@@ -114,6 +118,7 @@ function App() {
     }
   };
 
+  // Single return statement with no early returns (required for React Hooks rules)
   return (
     <>
       {isSetupPasswordPage ? (
