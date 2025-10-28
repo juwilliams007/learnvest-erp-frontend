@@ -4,14 +4,25 @@ import AddEmployee from "./addemployee";
 import Employees from "./employees";
 import Worklogs from "./worklogs";
 import ChangePassword from "./changepassword";
+import SetupPassword from "./setuppassword";
+import AdminTasks from "./admintasks";
+import EmployeeTasks from "./employeetasks";
 
 function App() {
   const [user, setUser] = useState(null);
-  const [attendance, setAttendance] = useState([]); // ✅ state for attendance logs
+  const [attendance, setAttendance] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const API_URL =
     process.env.REACT_APP_API_URL || "https://learnvest-erp.onrender.com/api";
+
+  // Check if user is on setup-password page
+  const isSetupPasswordPage = window.location.pathname === "/setup-password";
+
+  // If on setup password page, show that component only
+  if (isSetupPasswordPage) {
+    return <SetupPassword />;
+  }
 
   // Restore session if token exists
   useEffect(() => {
@@ -127,6 +138,8 @@ function App() {
 
           <h2>Users</h2>
           <Employees />
+
+          <AdminTasks />
         </>
       ) : (
         <>
@@ -174,6 +187,8 @@ function App() {
 
           <h2>Worklogs</h2>
           <Worklogs />
+
+          <EmployeeTasks />
 
           <ChangePassword />
         </>
